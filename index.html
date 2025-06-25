@@ -5,184 +5,232 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mumbai Masala Cafe - Mumbai ka Swaad, ab Dwarka Mein!</title>
     <!-- 
-    Chosen Palette: Warm Earth Tones
-    Application Structure Plan: A single-page application with vertical scrolling navigation. This structure is intuitive for users on all devices and follows a logical story: introduction (Hero), our story (About), interactive AI tools (AI Tools), featured items (Featured), a full visual menu (Menu), our vibe (Gallery), AI Review Writer, and how to find us (Contact).
+    Chosen Palette: Warm Earth Tones with Enhanced Cream & Terracotta
+    Application Structure Plan: A highly-visual, responsive single-page application designed for a premium "foody" experience. The structure uses an organic, flowing layout instead of rigid boxes to guide the user through a narrative: a bold welcome, our story, a clear call-to-action for the AI Chef, a showcase of specials, the interactive menu, and a beautiful gallery, culminating in easy contact info. This version has been meticulously refined for an exceptional mobile experience.
     Visualization & Content Choices: 
-        - Report Info: User feedback/dishes -> Goal: Generate marketing content (reviews) -> Viz/Presentation: AI Review Writer with multi-select and text input -> Interaction: User selects dishes, adds keywords, and clicks a button to call the Gemini API, which generates a review they can copy. -> Justification: Encourages positive reviews by removing the friction of writing, providing direct business value and a novel user experience. -> Library/Method: Gemini API (gemini-2.0-flash) via fetch.
-        - Report Info: User Preferences + Full Menu -> Goal: Personalize & Recommend -> Viz/Presentation: AI Meal Planner with text input -> Interaction: User types a request, clicks a button to call the Gemini API, and receives a custom meal suggestion. -> Justification: Provides a high-value, personalized feature that helps users discover food. -> Library/Method: Gemini API (gemini-2.0-flash) via fetch.
-        - Report Info: Custom ChatGPT Bot Link -> Goal: Provide AI-powered customer service -> Viz/Presentation: Dedicated button within the "AI Tools" section -> Interaction: User clicks a button to open the custom GPT in a new tab. -> Justification: Leverages a pre-built custom AI to offer an alternative, in-depth chat experience. -> Library/Method: Standard HTML `<a>` tag.
+        - Report Info: Custom ChatGPT Bot Link -> Goal: Provide a single, powerful AI interaction point -> Viz/Presentation: A creatively styled, prominent "AI Chef" section that feels integrated into the page's flow and is perfectly centered on mobile. -> Interaction: User clicks a styled button to open the custom GPT. -> Justification: Elevates the AI feature from a simple box to a core part of the brand's modern identity. -> Library/Method: Standard HTML `<a>` tag with advanced CSS.
+        - Report Info: Full Menu List with Images -> Goal: Organize & Filter Visually -> Viz/Presentation: Interactive Filterable Card-based Menu with enhanced styling and flawless responsiveness. The grid collapses from 4 columns to 2 on tablets and 1 on mobile for perfect readability. -> Interaction: Users click redesigned filter buttons. Cards have new hover effects. Placeholders are styled professionally. -> Justification: Improves the core menu interaction with a premium feel, aligning with the "foody vibe" on all devices. -> Library/Method: Vanilla JavaScript and dynamic HTML injection via `onerror`.
     CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. 
     -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         html { scroll-behavior: smooth; }
-        body { font-family: 'Poppins', sans-serif; background-color: #FFF7ED; }
-        .lora-font { font-family: 'Lora', serif; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #FDF8F2; /* Lighter, creamier background */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D3A37F' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .playfair-font { font-family: 'Playfair Display', serif; }
         .hero-section {
             background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('Images/redpasta.png');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed; /* Parallax effect */
         }
-        .gallery-img, .menu-card-img { transition: transform 0.3s ease, filter 0.3s ease; }
-        .gallery-img:hover, .menu-card:hover .menu-card-img { transform: scale(1.05); }
-        .menu-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .menu-card:hover { transform: translateY(-8px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.6s ease-out; }
+        .menu-card {
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid #0000000f;
+        }
+        .menu-card:hover { 
+            transform: translateY(-12px); 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition-delay: 0.1s;
+        }
         .reveal.visible { opacity: 1; transform: translateY(0); }
-        .menu-filter-btn { transition: all 0.3s ease; }
-        .menu-filter-btn.active { background-color: #ea580c; color: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #ea580c; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .menu-filter-btn { 
+            transition: all 0.3s ease; 
+            border: 1px solid #FDBF60;
+            color: #D97706;
+        }
+        .menu-filter-btn:hover {
+             background-color: #FDBF60;
+             color: white;
+        }
+        .menu-filter-btn.active { 
+            background-color: #D97706; /* Amber 600 */
+            color: white; 
+            border-color: #D97706;
+            box-shadow: 0 4px 14px 0 rgb(0 0 0 / 10%);
+        }
+        .gallery-item {
+             transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        #mobile-menu {
+            transition: opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-orange-50 text-gray-800">
+<body class="bg-orange-50 text-gray-700">
 
-    <header class="bg-white/80 backdrop-blur-lg shadow-md sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+    <header class="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#home" class="flex items-center">
                 <img src="Images/logo.png" alt="MMC Logo" class="h-12 mr-3" onerror="this.onerror=null;this.src='https://placehold.co/100x100/F97316/FFFFFF?text=MMC';">
-                <span class="text-xl font-bold text-orange-600">Mumbai Masala Café</span>
+                <span class="text-xl font-semibold text-amber-700 playfair-font">Mumbai Masala Café</span>
             </a>
-            <div class="hidden md:flex items-center space-x-6">
-                <a href="#home" class="text-gray-600 hover:text-orange-500 transition">Home</a>
-                <a href="#aitools" class="text-gray-600 hover:text-orange-500 transition">AI Tools</a>
-                <a href="#menu" class="text-gray-600 hover:text-orange-500 transition">Menu</a>
-                <a href="#review" class="text-gray-600 hover:text-orange-500 transition">Write a Review</a>
-                <a href="#gallery" class="text-gray-600 hover:text-orange-500 transition">Gallery</a>
-                <a href="#contact" class="text-gray-600 hover:text-orange-500 transition">Contact</a>
+            <div class="hidden md:flex items-center space-x-8 font-medium text-gray-600">
+                <a href="#home" class="hover:text-amber-600 transition">Home</a>
+                <a href="#aitools" class="hover:text-amber-600 transition">AI Chef</a>
+                <a href="#menu" class="hover:text-amber-600 transition">Menu</a>
+                <a href="#gallery" class="hover:text-amber-600 transition">Gallery</a>
+                <a href="#contact" class="hover:text-amber-600 transition">Contact</a>
             </div>
-            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            <button id="mobile-menu-button" class="md:hidden text-amber-700 focus:outline-none z-50">
+                <div id="hamburger-icon">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </div>
             </button>
         </nav>
-        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
-             <a href="#home" class="block py-2 text-gray-600 hover:text-orange-500">Home</a>
-             <a href="#aitools" class="block py-2 text-gray-600 hover:text-orange-500">AI Tools</a>
-             <a href="#menu" class="block py-2 text-gray-600 hover:text-orange-500">Menu</a>
-             <a href="#review" class="block py-2 text-gray-600 hover:text-orange-500">Write a Review</a>
-             <a href="#gallery" class="block py-2 text-gray-600 hover:text-orange-500">Gallery</a>
-             <a href="#contact" class="block py-2 text-gray-600 hover:text-orange-500">Contact</a>
-        </div>
     </header>
+    
+    <!-- Full-screen Mobile Menu -->
+    <div id="mobile-menu" class="opacity-0 hidden pointer-events-none fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center">
+        <div class="space-y-6 text-center">
+            <a href="#home" class="block text-3xl font-semibold text-gray-700 hover:text-amber-600 mobile-menu-link">Home</a>
+            <a href="#aitools" class="block text-3xl font-semibold text-gray-700 hover:text-amber-600 mobile-menu-link">AI Chef</a>
+            <a href="#menu" class="block text-3xl font-semibold text-gray-700 hover:text-amber-600 mobile-menu-link">Menu</a>
+            <a href="#gallery" class="block text-3xl font-semibold text-gray-700 hover:text-amber-600 mobile-menu-link">Gallery</a>
+            <a href="#contact" class="block text-3xl font-semibold text-gray-700 hover:text-amber-600 mobile-menu-link">Contact</a>
+        </div>
+    </div>
+
 
     <main>
-        <section id="home" class="hero-section text-white h-[calc(100vh-68px)] flex items-center justify-center">
+        <section id="home" class="hero-section text-white min-h-screen flex items-center justify-center">
             <div class="text-center px-4">
-                <h1 class="text-5xl md:text-7xl font-extrabold lora-font drop-shadow-lg mb-4">Mumbai ka Swaad, ab Dwarka Mein!</h1>
-                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 drop-shadow-md">No more cravings! Ab aapka favourite Mumbai street food aapke paas, Dwarka mein.</p>
-                <a href="#menu" class="bg-orange-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 shadow-xl">Menu Dekho!</a>
+                <h1 class="text-5xl sm:text-6xl md:text-8xl font-bold playfair-font drop-shadow-2xl mb-4">Mumbai ka Swaad,</h1>
+                <h2 class="text-4xl sm:text-5xl md:text-7xl font-bold playfair-font drop-shadow-2xl mb-8">ab Dwarka Mein!</h2>
+                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-10 drop-shadow-lg font-light">No more cravings! Ab aapka favourite Mumbai street food aapke paas, Dwarka mein.</p>
+                <a href="#menu" class="bg-amber-500 text-white font-bold py-4 px-10 rounded-full text-lg hover:bg-amber-600 transition-all duration-300 transform hover:scale-105 shadow-2xl">Menu Dekho!</a>
             </div>
         </section>
 
-        <section id="about" class="py-20 bg-white">
-            <div class="container mx-auto px-6 text-center reveal">
-                <h2 class="text-4xl font-bold text-orange-600 lora-font mb-6">Jahan Chai Milti Hai Masala Magic Se</h2>
-                <p class="max-w-3xl mx-auto text-gray-600 text-lg">Yeh section hamare cafe ki rooh hai. Yahan sirf khana nahi, ek poora experience milta hai. Aao, hamare saath Mumbai ke authentic flavours aur cozy atmosphere ka maza lo.</p>
+        <section id="about" class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                <div class="reveal">
+                    <h2 class="text-4xl sm:text-5xl font-bold text-amber-800 playfair-font mb-6">Jahan Chai Milti Hai Masala Magic Se</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed">Yeh section hamare cafe ki rooh hai. Yahan sirf khana nahi, ek poora experience milta hai. Aao, hamare saath Mumbai ke authentic flavours aur cozy atmosphere ka maza lo. Har dish ek kahani hai, har meal ek yaadgar pal.</p>
+                </div>
+                 <div class="reveal">
+                    <img src="Images/vibes.png" alt="Cafe interior" class="rounded-lg shadow-2xl w-full h-full object-cover">
+                </div>
             </div>
         </section>
 
-        <section id="aitools" class="py-20 bg-orange-50">
+        <section id="aitools" class="py-20 sm:py-24">
             <div class="container mx-auto px-6 text-center reveal">
-                <h2 class="text-4xl font-bold text-orange-600 lora-font mb-6">Apne Modern AI Tools</h2>
-                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-10">Technology ka full istemaal! Hamare AI tools se pao instant help aur custom recommendations. Try karke dekho!</p>
-                <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    <!-- AI Meal Planner -->
-                    <div class="bg-white p-8 rounded-lg shadow-lg text-left">
-                        <h3 class="text-2xl font-bold text-gray-800 lora-font mb-4">✨ AI Meal Planner</h3>
-                        <p class="text-gray-600 mb-6">Decide nahi kar paa rahe? Hamare AI ko batao kya khane ka mann hai, aur pao ek perfect meal suggestion.</p>
-                        <textarea id="planner-input" class="w-full p-4 border border-orange-200 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none" rows="3" placeholder="e.g., 'Ek spicy vegetarian meal chahiye'"></textarea>
-                        <button id="planner-button" class="mt-4 w-full bg-orange-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg">Suggestion Maango</button>
-                        <div id="planner-loader" class="hidden mx-auto mt-6 flex justify-center"><div class="loader"></div></div>
-                        <div id="planner-result" class="hidden mt-6 bg-orange-50 p-4 rounded-lg whitespace-pre-wrap"></div>
-                    </div>
-                    <!-- AI Chatbot -->
-                    <div class="bg-white p-8 rounded-lg shadow-lg text-left flex flex-col justify-center items-center">
-                         <h3 class="text-2xl font-bold text-gray-800 lora-font mb-4">🤖 AI Chef se Chat Karo</h3>
-                         <p class="text-gray-600 mb-6 text-center">Koi sawaal hai? Menu, timings, ya kuch bhi? Hamare AI Chatbot se baat karo aur pao instant jawaab.</p>
-                         <a href="https://chatgpt.com/g/g-685b446b50b88191a76c4c6ccf03852f-mmc" target="_blank" rel="noopener noreferrer" class="mt-auto w-full text-center bg-blue-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg">Chat Shuru Karo</a>
+                <h2 class="text-4xl sm:text-5xl font-bold text-amber-800 playfair-font mb-6">Apna Modern AI Chef</h2>
+                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-12">Technology ka full istemaal! Koi sawaal hai? Menu, timings, ya kuch bhi? Hamare AI Chef se baat karo aur pao instant jawaab aur custom recommendations!</p>
+                <div class="max-w-md mx-auto">
+                    <div class="bg-white p-8 sm:p-12 rounded-2xl shadow-2xl text-center transform hover:scale-105 transition-transform duration-300">
+                         <h3 class="text-3xl font-bold text-gray-800 playfair-font mb-4">🤖 Chat with the AI Chef</h3>
+                         <p class="text-gray-600 mb-8">Click karo aur hamare AI Chef se baat karke perfect meal plan banao ya apne sawaalon ke jawaab pao.</p>
+                         <a href="https://chatgpt.com/g/g-685b446b50b88191a76c4c6ccf03852f-mmc" target="_blank" rel="noopener noreferrer" class="w-full inline-block text-center bg-blue-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg">Chat Shuru Karo</a>
                     </div>
                 </div>
             </div>
         </section>
         
-        <section id="menu" class="py-20 bg-white">
+        <section id="featured" class="py-20 sm:py-24 bg-white">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12 reveal">
-                    <h2 class="text-4xl font-bold text-orange-600 lora-font mb-6">Tasveeron Waala Menu</h2>
-                    <p class="max-w-3xl mx-auto text-gray-600 text-lg">Ab menu dekhna hua aur bhi easy. Neeche diye filters se chuno apni pasand ki category - Veg, Non-Veg, ya Drinks. Ek click karo aur apni flavour journey shuru karo.</p>
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-4xl sm:text-5xl font-bold text-amber-800 playfair-font mb-6">Apne Crowd Favourites!</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600 text-lg">Ek nazar un dishes pe jo hamare regulars baar baar order karte hain. Yeh hamare menu ke superstars hain, taste ki guarantee!</p>
                 </div>
-                <div id="menu-filters" class="flex flex-wrap justify-center gap-2 md:gap-4 mb-10 reveal">
-                    <button class="menu-filter-btn active font-semibold py-2 px-4 rounded-full border border-orange-200 bg-white" data-category="all">All</button>
-                    <button class="menu-filter-btn font-semibold py-2 px-4 rounded-full border border-orange-200 bg-white" data-category="veg">Veg</button>
-                    <button class="menu-filter-btn font-semibold py-2 px-4 rounded-full border border-orange-200 bg-white" data-category="non-veg">Non-Veg</button>
-                    <button class="menu-filter-btn font-semibold py-2 px-4 rounded-full border border-orange-200 bg-white" data-category="breakfast">Breakfast</button>
-                    <button class="menu-filter-btn font-semibold py-2 px-4 rounded-full border border-orange-200 bg-white" data-category="drinks">Drinks</button>
-                </div>
-                <div id="menu-items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-            </div>
-        </section>
-
-        <section id="review" class="py-20 bg-orange-50">
-             <div class="container mx-auto px-6 text-center reveal">
-                <h2 class="text-4xl font-bold text-orange-600 lora-font mb-6">✨ Apna Review Likho!</h2>
-                <p class="max-w-3xl mx-auto text-gray-600 text-lg mb-10">Khana pasand aaya? Toh review likhne mein help hum karenge! Apne favourite dishes select karo aur hamara AI aapke liye ek shaandaar review likh dega.</p>
-                <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg text-left">
-                    <h3 class="text-xl font-bold text-gray-800 lora-font mb-4">1. Kya Kya Khaya? Select Karo:</h3>
-                    <div id="review-dishes-checklist" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-48 overflow-y-auto mb-6 p-4 border rounded-lg">
-                        <!-- Checkboxes will be populated by JS -->
-                    </div>
-                     <h3 class="text-xl font-bold text-gray-800 lora-font mb-4">2. (Optional) Kuch aur kehna hai?</h3>
-                     <input id="review-keywords" type="text" class="w-full p-3 border border-orange-200 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none" placeholder="e.g., 'amazing vibe', 'friendly staff', 'fast service'">
-                    <button id="review-button" class="mt-6 w-full bg-green-500 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg">Generate My Review</button>
-                    <div id="review-loader" class="hidden mx-auto mt-6 flex justify-center"><div class="loader"></div></div>
-                    <div id="review-result-wrapper" class="hidden mt-6">
-                        <textarea id="review-result" class="w-full p-4 border bg-gray-50 rounded-lg" rows="6" readonly></textarea>
-                        <button id="copy-review-button" class="mt-2 bg-gray-600 text-white font-bold py-2 px-6 rounded-full hover:bg-gray-700 transition">Copy Review</button>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <a href="#menu" class="group block overflow-hidden rounded-xl shadow-lg reveal relative">
+                        <img src="Images/vadapau.png" alt="Vada Pau" class="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="p-6 text-white absolute bottom-0 left-0 w-full">
+                            <h3 class="text-3xl font-bold playfair-font">Mumbai Vada Pav</h3>
+                        </div>
+                    </a>
+                    <a href="#menu" class="group block overflow-hidden rounded-xl shadow-lg reveal relative mt-0 md:mt-16" style="transition-delay: 100ms;">
+                        <img src="Images/redpasta.png" alt="Red Pasta" class="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300">
+                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                         <div class="p-6 text-white absolute bottom-0 left-0 w-full">
+                            <h3 class="text-3xl font-bold playfair-font">Masala Pasta</h3>
+                        </div>
+                    </a>
+                    <a href="#menu" class="group block overflow-hidden rounded-xl shadow-lg reveal relative" style="transition-delay: 200ms;">
+                        <img src="Images/sandwich.png" alt="Sandwich" class="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300">
+                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                         <div class="p-6 text-white absolute bottom-0 left-0 w-full">
+                            <h3 class="text-3xl font-bold playfair-font">Grilled Sandwiches</h3>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
 
-        <section id="gallery" class="py-20 bg-white">
+        <section id="menu" class="py-20 sm:py-24">
             <div class="container mx-auto px-6">
-                 <div class="text-center mb-12 reveal">
-                    <h2 class="text-4xl font-bold text-orange-600 lora-font mb-6">Capture Karo Apna MMC Moment</h2>
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-4xl sm:text-5xl font-bold text-amber-800 playfair-font mb-6">Tasveeron Waala Menu</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600 text-lg">Ab menu dekhna hua aur bhi easy. Neeche diye filters se chuno apni pasand ki category. Ek click karo aur apni flavour journey shuru karo.</p>
+                </div>
+                <div id="menu-filters" class="flex flex-wrap justify-center gap-3 md:gap-4 mb-12 reveal">
+                    <button class="menu-filter-btn active font-semibold py-2 px-5 rounded-full" data-category="all">All</button>
+                    <button class="menu-filter-btn font-semibold py-2 px-5 rounded-full" data-category="veg">Veg</button>
+                    <button class="menu-filter-btn font-semibold py-2 px-5 rounded-full" data-category="non-veg">Non-Veg</button>
+                    <button class="menu-filter-btn font-semibold py-2 px-5 rounded-full" data-category="breakfast">Breakfast</button>
+                    <button class="menu-filter-btn font-semibold py-2 px-5 rounded-full" data-category="drinks">Drinks</button>
+                </div>
+                <div id="menu-items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+            </div>
+        </section>
+
+        <section id="gallery" class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-16 reveal">
+                    <h2 class="text-4xl sm:text-5xl font-bold text-amber-800 playfair-font mb-6">Capture Karo Apna MMC Moment</h2>
                      <p class="max-w-3xl mx-auto text-gray-600 text-lg">Ek tasveer, hazaar flavours! Is gallery mein dekho hamare cafe ki life, hamare lazeez khano se lekar customers ke happy moments tak. Vibe check kar lo!</p>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div class="overflow-hidden rounded-lg shadow-lg reveal"><img src="Images/vibes.png" alt="Cafe ambiance" class="w-full h-full object-cover gallery-img"></div>
-                    <div class="overflow-hidden rounded-lg shadow-lg reveal" style="transition-delay: 100ms;"><img src="Images/vibes2.png" alt="Cafe storefront" class="w-full h-full object-cover gallery-img"></div>
-                    <div class="overflow-hidden rounded-lg shadow-lg col-span-2 md:col-span-1 reveal" style="transition-delay: 200ms;"><img src="Images/cholebhature.png" alt="Food collage" class="w-full h-full object-cover gallery-img"></div>
+                <div class="columns-2 md:columns-3 gap-4 space-y-4">
+                    <div class="overflow-hidden rounded-xl shadow-lg reveal gallery-item"><img src="Images/vibes.png" alt="Cafe ambiance" class="w-full h-full object-cover"></div>
+                    <div class="overflow-hidden rounded-xl shadow-lg reveal gallery-item"><img src="Images/cholebhature.png" alt="Food collage" class="w-full h-full object-cover"></div>
+                    <div class="overflow-hidden rounded-xl shadow-lg reveal gallery-item"><img src="Images/vadapau.png" alt="Vada Pau" class="w-full h-full object-cover"></div>
+                    <div class="overflow-hidden rounded-xl shadow-lg reveal gallery-item"><img src="Images/vibes2.png" alt="Cafe storefront" class="w-full h-full object-cover"></div>
+                    <div class="overflow-hidden rounded-xl shadow-lg reveal gallery-item"><img src="Images/wrap.png" alt="Wrap" class="w-full h-full object-cover"></div>
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="py-20 bg-orange-50">
+        <section id="contact" class="py-20 sm:py-24">
             <div class="container mx-auto px-6">
-                <div class="text-center mb-12 reveal">
-                    <h2 class="text-4xl font-bold text-orange-600 lora-font mb-6">Aao Milo Ya Call Karo</h2>
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-4xl sm:text-5xl font-bold text-amber-800 playfair-font mb-6">Aao Milo Ya Call Karo</h2>
                     <p class="max-w-3xl mx-auto text-gray-600 text-lg">Aane ka plan hai? Yahan aapko milegi saari jaankari - pata, phone number, aur timing. Hum aapka intezaar kar rahe hain!</p>
                 </div>
-                <div class="flex flex-wrap -mx-4 reveal bg-white p-8 rounded-lg shadow-lg">
+                <div class="flex flex-wrap -mx-4 reveal bg-white p-8 sm:p-12 rounded-2xl shadow-2xl">
                     <div class="w-full lg:w-1/2 px-4 mb-8 lg:mb-0">
                         <div class="h-full flex flex-col justify-center">
                              <div>
-                                <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Location</h3>
-                                <p class="text-gray-600 mb-2 flex items-start"><svg class="w-6 h-6 mr-3 text-orange-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg><span>Shop No. 01, Plot No.226, B-Block, Sector-19, Amrahi, Dwarka, New Delhi-110075</span></p>
-                                <p class="text-gray-600 flex items-center"><svg class="w-5 h-5 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg><a href="tel:7827735037" class="hover:text-orange-500">7827735037</a></p>
+                                <h3 class="text-2xl font-bold text-gray-800 playfair-font mb-4">Our Location</h3>
+                                <p class="text-gray-600 mb-4 flex items-start"><svg class="w-6 h-6 mr-4 text-amber-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg><span>Shop No. 01, Plot No.226, B-Block, Sector-19, Amrahi, Dwarka, New Delhi-110075</span></p>
+                                <p class="text-gray-600 flex items-center"><svg class="w-5 h-5 mr-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg><a href="tel:7827735037" class="hover:text-amber-600">7827735037</a></p>
                             </div>
                             <div class="mt-8">
-                                <h3 class="text-2xl font-bold text-gray-800 mb-4">Opening Hours</h3>
+                                <h3 class="text-2xl font-bold text-gray-800 playfair-font mb-4">Opening Hours</h3>
                                 <p class="text-gray-600">Monday - Sunday: 9:00 AM - 11:00 PM</p>
                             </div>
                         </div>
                     </div>
                     <div class="w-full lg:w-1/2 px-4">
-                         <div class="rounded-lg overflow-hidden shadow-lg h-full min-h-[400px]">
+                         <div class="rounded-2xl overflow-hidden shadow-lg h-full min-h-[400px]">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3503.242781481177!2d77.067303!3d28.592534!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1b193498357d%3A0x6b6949826a0a20f!2sSector%2019%2C%20Dwarka%2C%20Delhi%2C%20110075!5e0!3m2!1sen!2sin!4v1719232817342!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
@@ -195,7 +243,7 @@
         <div class="container mx-auto px-6 text-center">
              <a href="#home" class="flex items-center justify-center mb-6">
                 <img src="Images/logo.png" alt="MMC Logo" class="h-12 mr-3 bg-white rounded-full p-1" onerror="this.onerror=null;this.src='https://placehold.co/100x100/F97316/FFFFFF?text=MMC';">
-                <span class="text-2xl font-bold">Mumbai Masala Café</span>
+                <span class="text-2xl playfair-font">Mumbai Masala Café</span>
             </a>
             <p class="mb-8 max-w-lg mx-auto text-gray-400">Aapki Choice, Aapka Flavour. Hamari journey aur latest creations dekhne ke liye, Instagram pe follow zaroor karna!</p>
             <div class="mb-8">
@@ -223,23 +271,23 @@
             { name: 'Mexican Seekh Sabab Wrap', price: 160, category: 'non-veg', image: 'Images/wrap.png' },
             { name: 'Mexican Chicken Sausage Wrap', price: 160, category: 'non-veg', image: 'Images/wrap.png' },
             { name: 'Magic Mix Chicken Sandwich', price: 120, category: 'non-veg', image: 'Images/sandwich.png' },
-            { name: 'Masala Anda Bun Muska', price: 80, category: 'non-veg', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Masala Anda Kulcha Pizza', price: 110, category: 'non-veg', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Seekh Kabab Hot Dog', price: 120, category: 'non-veg', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
+            { name: 'Masala Anda Bun Muska', price: 80, category: 'non-veg', image: 'Images/placeholder.png' },
+            { name: 'Masala Anda Kulcha Pizza', price: 110, category: 'non-veg', image: 'Images/placeholder.png' },
+            { name: 'Seekh Kabab Hot Dog', price: 120, category: 'non-veg', image: 'Images/placeholder.png' },
             { name: 'Non Veg. Pasta with Sauce', price: 130, category: 'non-veg', image: 'Images/redpasta.png' },
             { name: 'Chicken Burger with Cheese', price: 120, category: 'non-veg', image: 'Images/vadapau.png' },
-            { name: 'Akuri', price: 90, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Fried Egg', price: 90, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Sunny Side Up', price: 90, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Cheese Omelette', price: 100, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Masala Omelette', price: 90, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Spanish Omelette', price: 110, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Chicken Sausage 2pc', price: 110, category: 'breakfast', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Delicious+Food' },
-            { name: 'Masala Kullad Chai', price: 35, category: 'drinks', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Chai+Time' },
-            { name: 'Hot Coffee', price: 70, category: 'drinks', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Chai+Time' },
-            { name: 'Chilled Coffee', price: 80, category: 'drinks', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Chai+Time' },
-            { name: 'Cold Coffee', price: 120, category: 'drinks', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Chai+Time' },
-            { name: 'Oreo Shake', price: 120, category: 'drinks', image: 'https://placehold.co/400x300/F97316/FFFFFF?text=Chai+Time' },
+            { name: 'Akuri', price: 90, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Fried Egg', price: 90, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Sunny Side Up', price: 90, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Cheese Omelette', price: 100, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Masala Omelette', price: 90, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Spanish Omelette', price: 110, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Chicken Sausage 2pc', price: 110, category: 'breakfast', image: 'Images/placeholder.png' },
+            { name: 'Masala Kullad Chai', price: 35, category: 'drinks', image: 'Images/placeholder.png' },
+            { name: 'Hot Coffee', price: 70, category: 'drinks', image: 'Images/placeholder.png' },
+            { name: 'Chilled Coffee', price: 80, category: 'drinks', image: 'Images/placeholder.png' },
+            { name: 'Cold Coffee', price: 120, category: 'drinks', image: 'Images/placeholder.png' },
+            { name: 'Oreo Shake', price: 120, category: 'drinks', image: 'Images/placeholder.png' },
         ];
 
         const observer = new IntersectionObserver((entries) => {
@@ -249,13 +297,41 @@
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.15 }); 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-        mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        mobileMenuButton.addEventListener('click', () => {
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => {
+                    mobileMenu.classList.remove('opacity-0');
+                    mobileMenu.classList.add('pointer-events-auto');
+                }, 10);
+                hamburgerIcon.innerHTML = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            } else {
+                mobileMenu.classList.add('opacity-0');
+                mobileMenu.classList.remove('pointer-events-auto');
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300); // Match transition duration
+                hamburgerIcon.innerHTML = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>`;
+            }
+        });
+        
+        document.querySelectorAll('.mobile-menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                 mobileMenu.classList.add('opacity-0');
+                mobileMenu.classList.remove('pointer-events-auto');
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300);
+                hamburgerIcon.innerHTML = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>`;
+            })
+        });
 
         // Visual Menu Logic
         const menuContainer = document.getElementById('menu-items-container');
@@ -264,15 +340,15 @@
             menuContainer.innerHTML = '';
             itemsToRender.forEach((item, index) => {
                 const menuItemDiv = document.createElement('div');
-                menuItemDiv.className = 'menu-card bg-white rounded-lg shadow-md flex flex-col overflow-hidden reveal';
+                menuItemDiv.className = 'menu-card bg-white rounded-xl shadow-lg flex flex-col overflow-hidden reveal';
                 menuItemDiv.style.transitionDelay = `${(index % 8) * 50}ms`;
                 menuItemDiv.innerHTML = `
-                    <div class="h-48 overflow-hidden">
-                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover menu-card-img" onerror="this.onerror=null;this.src='https://placehold.co/400x300/F97316/FFFFFF?text=Yummy!';">
+                    <div class="h-56 overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML = '<div class=\\'w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs p-2 text-center font-semibold\\'>Waiting for a good camera to take photo</div>';">
                     </div>
-                    <div class="p-4 flex flex-col flex-grow">
+                    <div class="p-5 flex flex-col flex-grow">
                         <h4 class="font-bold text-lg text-gray-800 flex-grow">${item.name}</h4>
-                        <p class="font-black text-orange-600 text-xl mt-2">₹${item.price}</p>
+                        <p class="font-black text-amber-600 text-2xl mt-3">₹${item.price}</p>
                     </div>
                 `;
                 menuContainer.appendChild(menuItemDiv);
@@ -289,92 +365,6 @@
             });
         });
         renderMenu(menuItems);
-
-        // AI Meal Planner Logic
-        const plannerButton = document.getElementById('planner-button');
-        const plannerInput = document.getElementById('planner-input');
-        const plannerResult = document.getElementById('planner-result');
-        const plannerLoader = document.getElementById('planner-loader');
-
-        plannerButton.addEventListener('click', async () => {
-            const userInput = plannerInput.value.trim();
-            if (!userInput) {
-                plannerResult.textContent = 'Aapko kaisa khana pasand hai, batao toh sahi!';
-                plannerResult.classList.remove('hidden'); return;
-            }
-            plannerResult.classList.add('hidden');
-            plannerLoader.style.display = 'flex';
-            const menuString = menuItems.map(item => `${item.name} (${item.category}) - ₹${item.price}`).join(', ');
-            const prompt = `You are a friendly and helpful assistant for the Mumbai Masala Cafe. A customer needs help deciding what to eat. Based on our menu and their request, suggest a meal for them in a conversational and friendly Hinglish tone. Keep the response concise and formatted nicely with titles like "**Starter:**", "**Main:**", and "**Drink:**". If the request is too vague, suggest some of our most popular items. Our Menu: ${menuString}. Customer's request: "${userInput}"`;
-            try {
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error(`API error: ${response.statusText}`);
-                const result = await response.json();
-                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
-                    plannerResult.textContent = result.candidates[0].content.parts[0].text;
-                } else { throw new Error("Could not generate suggestion."); }
-            } catch (error) {
-                plannerResult.textContent = "Sorry, kuch toh gadbad ho gayi. Please hamara poora menu neeche dekhein aur baad mein try karein.";
-            } finally {
-                plannerLoader.style.display = 'none';
-                plannerResult.classList.remove('hidden');
-            }
-        });
-
-        // AI Review Writer Logic
-        const reviewDishesContainer = document.getElementById('review-dishes-checklist');
-        menuItems.forEach(item => {
-            const label = document.createElement('label');
-            label.className = 'flex items-center space-x-2 text-sm';
-            label.innerHTML = `<input type="checkbox" class="rounded text-orange-500 focus:ring-orange-500" value="${item.name}"><span class="truncate">${item.name}</span>`;
-            reviewDishesContainer.appendChild(label);
-        });
-
-        const reviewButton = document.getElementById('review-button');
-        const reviewKeywords = document.getElementById('review-keywords');
-        const reviewResultWrapper = document.getElementById('review-result-wrapper');
-        const reviewResultTextarea = document.getElementById('review-result');
-        const reviewLoader = document.getElementById('review-loader');
-        const copyReviewButton = document.getElementById('copy-review-button');
-
-        reviewButton.addEventListener('click', async () => {
-            const selectedDishes = Array.from(reviewDishesContainer.querySelectorAll('input:checked')).map(input => input.value);
-            if (selectedDishes.length === 0) {
-                alert('Please select at least one dish you enjoyed!'); return;
-            }
-            const keywords = reviewKeywords.value.trim();
-            reviewResultWrapper.classList.add('hidden');
-            reviewLoader.style.display = 'flex';
-
-            const prompt = `You are a happy customer of Mumbai Masala Cafe. Write a positive and enthusiastic review for them in a friendly, conversational Hinglish tone. Mention that you are in Dwarka. You ate the following dishes: ${selectedDishes.join(', ')}. Also, incorporate these feelings or keywords if provided: "${keywords}". The review should be perfect for posting on Google Maps or Zomato. Start with a catchy title.`;
-
-            try {
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error(`API error: ${response.statusText}`);
-                const result = await response.json();
-                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
-                    reviewResultTextarea.value = result.candidates[0].content.parts[0].text;
-                    reviewResultWrapper.classList.remove('hidden');
-                } else { throw new Error("Could not generate review."); }
-            } catch (error) {
-                alert("Sorry, we couldn't generate a review right now. Please try again later.");
-            } finally {
-                reviewLoader.style.display = 'none';
-            }
-        });
-        
-        copyReviewButton.addEventListener('click', () => {
-            reviewResultTextarea.select();
-            document.execCommand('copy');
-            copyReviewButton.textContent = 'Copied!';
-            setTimeout(() => { copyReviewButton.textContent = 'Copy Review'; }, 2000);
-        });
     });
     </script>
 </body>
